@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sales & Marketing ROI Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-dark: #1e2f5c;
+            --secondary: #475569;
+            --accent: #059669;
+            --accent-light: #d1fae5;
+            --background: #f8fafc;
+            --white: #ffffff;
+            --gold: #d97706;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-400: #94a3b8;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+            --red-500: #ef4444;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--background);
+            color: var(--slate-800);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Progress Steps */
+        .progress-container {
+            margin-bottom: 40px;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50px;
+            right: 50px;
+            height: 2px;
+            background: var(--slate-200);
+            z-index: 0;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 2px solid var(--slate-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--slate-400);
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-number {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        .step.completed .step-number {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--white);
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+            color: var(--slate-400);
+            text-align: center;
+            max-width: 100px;
+        }
+
+        .step.active .step-label,
+        .step.completed .step-label {
+            color: var(--slate-700);
+            font-weight: 500;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .card-accent {
+            border-left: 4px solid var(--primary);
+        }
+
+        .card-accent-green {
+            border-left: 4px solid var(--accent);
+        }
+
+        .card-accent-gold {
+            border-left: 4px solid var(--gold);
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--slate-800);
+            margin-bottom: 8px;
+        }
+
+        .card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--slate-700);
+            margin-bottom: 16px;
+        }
+
+        .card-description {
+            color: var(--secondary);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        /* Checklist */
+        .checklist {
+            background: var(--slate-100);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .checklist h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: var(--slate-600);
+        }
+
+        .checklist-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .checklist-icon {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            border: 2px solid var(--slate-300);
+            border-radius: 4px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .checklist-item.checked .checklist-icon {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .checklist-item.checked .checklist-icon::after {
+            content: '✓';
+            color: var(--white);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--slate-700);
+            margin-bottom: 8px;
+        }
+
+        .label-hint {
+            font-weight: 400;
+            color: var(--slate-400);
+            font-size: 0.8rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            border: 1px solid var(--slate-300);
+            border-radius: 6px;
+            background: var(--slate-100);
+            color: var(--slate-800);
+            transition: all 0.2s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+
+        input::placeholder {
+            color: var(--slate-400);
+        }
+
+        /* Radio & Checkbox Groups */
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            border: 1px solid var(--slate-200);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .radio-option:hover {
+            border-color: var(--primary);
+            background: rgba(30, 58, 138, 0.02);
+        }
+
+        .radio-option.selected {
+            border-color: var(--primary);
+            background: rgba(30, 58, 138, 0.05);
+        }
+
+        .radio-option input[type="radio"],
+        .radio-option input[type="checkbox"] {
+            margin-right: 12px;
+            margin-top: 2px;
+            accent-color: var(--primary);
+        }
+
+        .radio-option-content {
+            flex: 1;
+        }
+
+        .radio-option-title {
+            font-weight: 500;
+            color: var(--slate-800);
+            margin-bottom: 4px;
+        }
+
+        .radio-option-desc {
+            font-size: 0.8rem;
+            color: var(--slate-500);
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--slate-100);
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .toggle-label {
+            font-size: 0.875rem;
+            color: var(--slate-600);
+            font-weight: 500;
+        }
+
+        .toggle-label.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 32px;
+            cursor: pointer;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--slate-300);
+            transition: 0.3s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: var(--accent);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(28px);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            font-family: inherit;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--slate-700);
+            border: 1px solid var(--slate-300);
+        }
+
+        .btn-secondary:hover {
+            background: var(--slate-100);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        /* Section visibility */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Dynamic Questions */
+        .dynamic-questions {
+            display: none;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--slate-200);
+        }
+
+        .dynamic-questions.visible {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Results Table */
+        .results-table-container {
+            overflow-x: auto;
+            margin: 24px 0;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .results-table th {
+            background: var(--primary);
+            color: var(--white);
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .results-table th:first-child {
+            border-radius: 6px 0 0 0;
+        }
+
+        .results-table th:last-child {
+            border-radius: 0 6px 0 0;
+        }
+
+        .results-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--slate-200);
+        }
+
+        .results-table tr:nth-child(even) {
+            background: var(--slate-100);
+        }
+
+        .results-table tr:last-child td:first-child {
+            border-radius: 0 0 0 6px;
+        }
+
+        .results-table tr:last-child td:last-child {
+            border-radius: 0 0 6px 0;
+        }
+
+        .results-table .highlight-row {
+            background: var(--accent-light) !important;
+            font-weight: 500;
+        }
+
+        .roi-positive {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .roi-value {
+            font-family: 'Inter', monospace;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Assumptions Box */
+        .assumptions-box {
+            background: var(--slate-100);
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 24px;
+        }
+
+        .assumptions-box h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--slate-700);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .assumptions-list {
+            list-style: none;
+            font-size: 0.85rem;
+            color: var(--slate-600);
+        }
+
+        .assumptions-list li {
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .assumptions-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--slate-400);
+        }
+
+        /* Improvements Section */
+        .improvements-section {
+            margin-top: 32px;
+        }
+
+        .improvement-card {
+            background: var(--white);
+            border: 1px solid var(--slate-200);
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .improvement-card h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .improvement-list {
+            list-style: none;
+        }
+
+        .improvement-list li {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+            font-size: 0.875rem;
+            color: var(--slate-700);
+            border-bottom: 1px solid var(--slate-100);
+        }
+
+        .improvement-list li:last-child {
+            border-bottom: none;
+        }
+
+        .improvement-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* Next Steps */
+        .next-steps {
+            margin-top: 32px;
+        }
+
+        .next-step-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: var(--slate-100);
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .next-step-number {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .next-step-content h5 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--slate-800);
+            margin-bottom: 4px;
+        }
+
+        .next-step-content p {
+            font-size: 0.85rem;
+            color: var(--slate-600);
+        }
+
+        /* Warning/Info Boxes */
+        .info-box {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(30, 58, 138, 0.05);
+            border: 1px solid rgba(30, 58, 138, 0.1);
+            border-radius: 6px;
+            margin-top: 24px;
+        }
+
+        .info-box-icon {
+            font-size: 1.25rem;
+        }
+
+        .info-box-content {
+            font-size: 0.85rem;
+            color: var(--slate-700);
+        }
+
+        .warning-box {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(217, 119, 6, 0.08);
+            border: 1px solid rgba(217, 119, 6, 0.2);
+            border-radius: 6px;
+            margin-top: 16px;
+        }
+
+        .warning-box-content {
+            font-size: 0.85rem;
+            color: var(--slate-700);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 250px;
+            background-color: var(--slate-800);
+            color: var(--white);
+            text-align: left;
+            border-radius: 6px;
+            padding: 12px;
+            position: absolute;
+            z-index: 100;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            font-size: 0.8rem;
+            font-weight: 400;
+            line-height: 1.5;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tooltip-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            background: var(--slate-300);
+            border-radius: 50%;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--slate-600);
+            margin-left: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px 16px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .progress-steps::before {
+                display: none;
+            }
+
+            .progress-steps {
+                flex-wrap: wrap;
+                gap: 16px;
+            }
+
+            .card {
+                padding: 24px 20px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .results-table {
+                font-size: 0.8rem;
+            }
+
+            .results-table th,
+            .results-table td {
+                padding: 10px 12px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .btn-group, .progress-container {
+                display: none;
+            }
+
+            .card {
+                box-shadow: none;
+                border: 1px solid var(--slate-200);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>AI Sales & Marketing ROI Calculator</h1>
+            <p>Evaluate the feasibility and expected return on investment for AI-powered sales and marketing transformation projects</p>
+        </header>
+
+        <!-- Progress Steps -->
+        <div class="progress-container">
+            <div class="progress-steps">
+                <div class="step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <span class="step-label">Select Topic</span>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-number">2</div>
+                    <span class="step-label">Provide Details</span>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-number">3</div>
+                    <span class="step-label">Review Data</span>
+                </div>
+                <div class="step" data-step="4">
+                    <div class="step-number">4</div>
+                    <span class="step-label">View Results</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checklist -->
+        <div class="checklist">
+            <h3>Evaluation Process Overview</h3>
+            <div class="checklist-item" data-checklist="1">
+                <div class="checklist-icon"></div>
+                <span>Select one or more AI project topics relevant to your business</span>
+            </div>
+            <div class="checklist-item" data-checklist="2">
+                <div class="checklist-icon"></div>
+                <span>Provide current operational metrics (staff count, time allocation, costs)</span>
+            </div>
+            <div class="checklist-item" data-checklist="3">
+                <div class="checklist-icon"></div>
+                <span>Review and validate your input data for accuracy</span>
+            </div>
+            <div class="checklist-item" data-checklist="4">
+                <div class="checklist-icon"></div>
+                <span>Analyze calculated ROI with conservative and optimistic scenarios</span>
+            </div>
+            <div class="checklist-item" data-checklist="5">
+                <div class="checklist-icon"></div>
+                <span>Review implementation recommendations and next steps</span>
+            </div>
+        </div>
+
+        <!-- Section 1: Topic Selection -->
+        <section id="section-1" class="section active">
+            <div class="card card-accent">
+                <h2>Step 1: Select Your AI Project Topics</h2>
+                <p class="card-description">Choose one or more areas where you want to evaluate AI implementation potential. You can select multiple topics for a comprehensive analysis.</p>
+
+                <div class="form-group">
+                    <label>Which AI solutions are you interested in evaluating?</label>
+                    <div class="radio-group" id="topic-selection">
+                        <label class="radio-option" data-topic="sales-engine">
+                            <input type="checkbox" name="topics" value="sales-engine">
+                            <div class="radio-option-content">
+                                <div class="radio-option-title">AI Sales Engine Setup</div>
+                                <div class="radio-option-desc">Automate lead generation, qualification, and outreach with AI-powered prospecting tools</div>
+                            </div>
+                        </label>
+                        <label class="radio-option" data-topic="content-factory">
+                            <input type="checkbox" name="topics" value="content-factory">
+                            <div class="radio-option-content">
+                                <div class="radio-option-title">AI Marketing Content Factory</div>
+                                <div class="radio-option-desc">Scale content production with AI writing assistants, image generators, and SEO optimization</div>
+                            </div>
+                        </label>
+                        <label class="radio-option" data-topic="customer-analytics">
+                            <input type="checkbox" name="topics" value="customer-analytics">
+                            <div class="radio-option-content">
+                                <div class="radio-option-title">AI Customer Analytics Platform</div>
+                                <div class="radio-option-desc">Predictive customer insights, churn prevention, and personalized recommendation engines</div>
+                            </div>
+                        </label>
+                        <label class="radio-option" data-topic="chatbot-support">
+                            <input type="checkbox" name="topics" value="chatbot-support">
+                            <div class="radio-option-content">
+                                <div class="radio-option-title">AI Chatbot & Support Automation</div>
+                                <div class="radio-option-desc">24/7 customer support with intelligent chatbots and automated ticket resolution</div>
+                            </div>
+                        </label>
+                        <label class="radio-option" data-topic="ad-optimization">
+                            <input type="checkbox" name="topics" value="ad-optimization">
+                            <div class="radio-option-content">
+                                <div class="radio-option-title">AI Ad Campaign Optimization</div>
+                                <div class="radio-option-desc">Intelligent bid management, audience targeting, and creative optimization across platforms</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="btn-to-step-2" disabled>Continue to Details</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Dynamic Questions -->
+        <section id="section-2" class="section">
+            <div class="card card-accent">
+                <h2>Step 2: Provide Your Business Details</h2>
+                <p class="card-description">Please provide information about your current operations. Estimates are acceptable if exact figures are unavailable.</p>
+
+                <!-- Sales Engine Questions -->
+                <div id="questions-sales-engine" class="dynamic-questions">
+                    <h3>AI Sales Engine Setup</h3>
+                    <div class="form-group">
+                        <label>How many sales FTEs (SDRs, AEs, etc.) do you currently employ?
+                            <span class="tooltip">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Full-time equivalent employees dedicated to sales activities including prospecting, qualification, and closing.</span>
+                            </span>
+                        </label>
+                        <input type="number" id="sales-fte" placeholder="e.g., 10" min="1" max="1000">
+                    </div>
+                    <div class="form-group">
+                        <label>Average hours spent daily on lead generation/research per sales person
+                            <span class="label-hint">(1-8 hours)</span>
+                        </label>
+                        <input type="number" id="sales-lead-hours" placeholder="e.g., 3" min="0.5" max="8" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label>Average annual salary per sales FTE (in EUR)
+                            <span class="tooltip">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Include base salary and expected commission. This helps calculate potential efficiency savings.</span>
+                            </span>
+                        </label>
+                        <input type="number" id="sales-salary" placeholder="e.g., 55000" min="20000" max="500000">
+                    </div>
+                    <div class="form-group">
+                        <label>Current monthly outreach volume (emails/calls combined)</label>
+                        <input type="number" id="sales-outreach" placeholder="e.g., 5000" min="100" max="1000000">
+                    </div>
+                    <div class="form-group">
+                        <label>Current lead-to-meeting conversion rate (%)
+                            <span class="label-hint">(0-100%)</span>
+                        </label>
+                        <input type="number" id="sales-conversion" placeholder="e.g., 2.5" min="0" max="100" step="0.1">
+                    </div>
+                </div>
+
+                <!-- Content Factory Questions -->
+                <div id="questions-content-factory" class="dynamic-questions">
+                    <h3>AI Marketing Content Factory</h3>
+                    <div class="form-group">
+                        <label>How many FTEs work on content creation (writers, designers)?</label>
+                        <input type="number" id="content-fte" placeholder="e.g., 3" min="0" max="500">
+                    </div>
+                    <div class="form-group">
+                        <label>Average hours spent weekly on content creation per person</label>
+                        <input type="number" id="content-hours" placeholder="e.g., 25" min="1" max="60">
+                    </div>
+                    <div class="form-group">
+                        <label>Average annual salary per content FTE (in EUR)</label>
+                        <input type="number" id="content-salary" placeholder="e.g., 45000" min="20000" max="300000">
+                    </div>
+                    <div class="form-group">
+                        <label>Monthly content pieces produced (blogs, social posts, ads)</label>
+                        <input type="number" id="content-volume" placeholder="e.g., 50" min="1" max="10000">
+                    </div>
+                    <div class="form-group">
+                        <label>Current monthly spend on freelancers/agencies for content (EUR)</label>
+                        <input type="number" id="content-external" placeholder="e.g., 5000" min="0" max="1000000">
+                    </div>
+                </div>
+
+                <!-- Customer Analytics Questions -->
+                <div id="questions-customer-analytics" class="dynamic-questions">
+                    <h3>AI Customer Analytics Platform</h3>
+                    <div class="form-group">
+                        <label>Total number of customers in your database</label>
+                        <input type="number" id="analytics-customers" placeholder="e.g., 10000" min="100" max="100000000">
+                    </div>
+                    <div class="form-group">
+                        <label>Average customer lifetime value (CLV) in EUR</label>
+                        <input type="number" id="analytics-clv" placeholder="e.g., 2500" min="10" max="10000000">
+                    </div>
+                    <div class="form-group">
+                        <label>Current annual churn rate (%)
+                            <span class="label-hint">(0-100%)</span>
+                        </label>
+                        <input type="number" id="analytics-churn" placeholder="e.g., 15" min="0" max="100" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label>Hours spent weekly on manual data analysis</label>
+                        <input type="number" id="analytics-hours" placeholder="e.g., 20" min="0" max="200">
+                    </div>
+                    <div class="form-group">
+                        <label>Current spend on analytics tools/platforms monthly (EUR)</label>
+                        <input type="number" id="analytics-tools" placeholder="e.g., 2000" min="0" max="500000">
+                    </div>
+                </div>
+
+                <!-- Chatbot Support Questions -->
+                <div id="questions-chatbot-support" class="dynamic-questions">
+                    <h3>AI Chatbot & Support Automation</h3>
+                    <div class="form-group">
+                        <label>Number of customer support FTEs</label>
+                        <input type="number" id="support-fte" placeholder="e.g., 5" min="0" max="10000">
+                    </div>
+                    <div class="form-group">
+                        <label>Average annual salary per support FTE (in EUR)</label>
+                        <input type="number" id="support-salary" placeholder="e.g., 38000" min="15000" max="200000">
+                    </div>
+                    <div class="form-group">
+                        <label>Average monthly support tickets/inquiries</label>
+                        <input type="number" id="support-tickets" placeholder="e.g., 3000" min="10" max="10000000">
+                    </div>
+                    <div class="form-group">
+                        <label>Average handling time per ticket (minutes)</label>
+                        <input type="number" id="support-time" placeholder="e.g., 12" min="1" max="480">
+                    </div>
+                    <div class="form-group">
+                        <label>Percentage of tickets that are repetitive/FAQ-type (%)
+                            <span class="label-hint">(0-100%)</span>
+                        </label>
+                        <input type="number" id="support-repetitive" placeholder="e.g., 60" min="0" max="100">
+                    </div>
+                </div>
+
+                <!-- Ad Optimization Questions -->
+                <div id="questions-ad-optimization" class="dynamic-questions">
+                    <h3>AI Ad Campaign Optimization</h3>
+                    <div class="form-group">
+                        <label>Monthly advertising spend across all platforms (EUR)</label>
+                        <input type="number" id="ads-spend" placeholder="e.g., 25000" min="500" max="100000000">
+                    </div>
+                    <div class="form-group">
+                        <label>Number of FTEs managing ad campaigns</label>
+                        <input type="number" id="ads-fte" placeholder="e.g., 2" min="0" max="500">
+                    </div>
+                    <div class="form-group">
+                        <label>Average annual salary per ads FTE (in EUR)</label>
+                        <input type="number" id="ads-salary" placeholder="e.g., 50000" min="20000" max="300000">
+                    </div>
+                    <div class="form-group">
+                        <label>Current average ROAS (Return on Ad Spend)
+                            <span class="tooltip">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Revenue generated per EUR spent on advertising. E.g., 3.0 means €3 revenue for every €1 spent.</span>
+                            </span>
+                        </label>
+                        <input type="number" id="ads-roas" placeholder="e.g., 3.5" min="0" max="100" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label>Hours spent weekly on campaign optimization</label>
+                        <input type="number" id="ads-hours" placeholder="e.g., 15" min="1" max="100">
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" id="btn-back-to-1">Back</button>
+                    <button class="btn btn-primary" id="btn-to-step-3">Review Data</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Data Review -->
+        <section id="section-3" class="section">
+            <div class="card card-accent">
+                <h2>Step 3: Review Your Input Data</h2>
+                <p class="card-description">Please verify the information below before calculating your ROI. Missing or incomplete data will be noted in the results.</p>
+
+                <div id="data-review-container">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <div class="info-box">
+                    <span class="info-box-icon">ℹ</span>
+                    <div class="info-box-content">
+                        <strong>Data Quality Note:</strong> The accuracy of ROI projections depends on the completeness of your input. Where data is missing, industry benchmarks will be applied and clearly indicated in the results.
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" id="btn-back-to-2">Edit Data</button>
+                    <button class="btn btn-primary" id="btn-calculate">Calculate ROI</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Results -->
+        <section id="section-4" class="section">
+            <div class="card card-accent-green">
+                <h2>Your ROI Analysis Results</h2>
+                <p class="card-description">Based on your input data, here are the projected returns for your selected AI initiatives.</p>
+
+                <!-- Scenario Toggle -->
+                <div class="toggle-container">
+                    <span class="toggle-label active" id="label-conservative">Conservative</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="scenario-toggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label" id="label-optimistic">Optimistic</span>
+                </div>
+
+                <div class="results-table-container">
+                    <table class="results-table" id="results-table">
+                        <thead>
+                            <tr>
+                                <th>Topic</th>
+                                <th>Estimated ROI (EUR)</th>
+                                <th>ROI %</th>
+                                <th>Duration</th>
+                                <th>Project Cost (EUR)</th>
+                                <th>Key Assumptions/Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Assumptions Methodology -->
+                <div class="assumptions-box" id="assumptions-methodology">
+                    <h4>
+                        <span>Calculation Methodology & Assumptions</span>
+                        <span class="tooltip">
+                            <span class="tooltip-icon">?</span>
+                            <span class="tooltip-text">These assumptions are based on 50+ AI implementation projects. They represent median outcomes achievable with proper implementation.</span>
+                        </span>
+                    </h4>
+                    <ul class="assumptions-list" id="methodology-list">
+                        <!-- Populated dynamically -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Improvements Section -->
+            <div class="card card-accent-gold improvements-section" id="improvements-section">
+                <h2>Potential Improvements to Drive Your Return</h2>
+                <p class="card-description">Actionable recommendations specific to your selected AI initiatives that can maximize your ROI.</p>
+                <div id="improvements-container">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="card card-accent next-steps">
+                <h2>Next Steps</h2>
+                <p class="card-description">Recommended actions to move forward with your AI transformation journey.</p>
+
+                <div class="next-step-item">
+                    <div class="next-step-number">1</div>
+                    <div class="next-step-content">
+                        <h5>Deep Dive into Assumptions</h5>
+                        <p>Schedule a 30-minute consultation to validate assumptions against your specific business context and refine ROI projections.</p>
+                    </div>
+                </div>
+                <div class="next-step-item">
+                    <div class="next-step-number">2</div>
+                    <div class="next-step-content">
+                        <h5>Technical Feasibility Assessment</h5>
+                        <p>Evaluate your current tech stack, data infrastructure, and integration requirements for seamless AI implementation.</p>
+                    </div>
+                </div>
+                <div class="next-step-item">
+                    <div class="next-step-number">3</div>
+                    <div class="next-step-content">
+                        <h5>Pilot Project Scoping</h5>
+                        <p>Define a focused proof-of-concept to demonstrate value within 4-6 weeks before full-scale implementation.</p>
+                    </div>
+                </div>
+                <div class="next-step-item">
+                    <div class="next-step-number">4</div>
+                    <div class="next-step-content">
+                        <h5>ROI Tracking Framework</h5>
+                        <p>Establish KPIs and measurement systems to track actual returns against projections throughout implementation.</p>
+                    </div>
+                </div>
+                <div class="next-step-item">
+                    <div class="next-step-number">5</div>
+                    <div class="next-step-content">
+                        <h5>Full Implementation Roadmap</h5>
+                        <p>Develop a comprehensive project plan with milestones, resource allocation, and change management strategy.</p>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <span class="info-box-icon">⚠</span>
+                    <div class="warning-box-content">
+                        <strong>Important:</strong> ROI projections are estimates based on industry benchmarks and your provided data. Actual results depend on implementation quality, organizational readiness, and market conditions. A detailed assessment is recommended before investment decisions.
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" id="btn-start-over">Start New Analysis</button>
+                <button class="btn btn-primary" onclick="window.print()">Print Results</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Application State
+        const state = {
+            currentStep: 1,
+            selectedTopics: [],
+            inputData: {},
+            isOptimistic: false
+        };
+
+        // Topic Display Names
+        const topicNames = {
+            'sales-engine': 'AI Sales Engine Setup',
+            'content-factory': 'AI Marketing Content Factory',
+            'customer-analytics': 'AI Customer Analytics Platform',
+            'chatbot-support': 'AI Chatbot & Support Automation',
+            'ad-optimization': 'AI Ad Campaign Optimization'
+        };
+
+        // Default values for missing data (industry benchmarks)
+        const defaults = {
+            'sales-engine': {
+                fte: 5,
+                leadHours: 3,
+                salary: 55000,
+                outreach: 5000,
+                conversion: 2
+            },
+            'content-factory': {
+                fte: 3,
+                hours: 25,
+                salary: 45000,
+                volume: 50,
+                external: 3000
+            },
+            'customer-analytics': {
+                customers: 10000,
+                clv: 2500,
+                churn: 15,
+                hours: 20,
+                tools: 2000
+            },
+            'chatbot-support': {
+                fte: 5,
+                salary: 38000,
+                tickets: 3000,
+                time: 12,
+                repetitive: 60
+            },
+            'ad-optimization': {
+                spend: 25000,
+                fte: 2,
+                salary: 50000,
+                roas: 3.5,
+                hours: 15
+            }
+        };
+
+        // Project cost and duration assumptions
+        const projectParams = {
+            'sales-engine': {
+                baseCost: 15000,
+                costPerFTE: 600,
+                baseWeeks: 6,
+                weeksPerFTE: 0.3,
+                maxWeeks: 12
+            },
+            'content-factory': {
+                baseCost: 12000,
+                costPerFTE: 500,
+                baseWeeks: 5,
+                weeksPerFTE: 0.25,
+                maxWeeks: 10
+            },
+            'customer-analytics': {
+                baseCost: 18000,
+                costPerCustomer: 0.0005, // per 1000 customers
+                baseWeeks: 8,
+                weeksPerCustomerScale: 0.5, // per 10k customers
+                maxWeeks: 16
+            },
+            'chatbot-support': {
+                baseCost: 14000,
+                costPerFTE: 400,
+                baseWeeks: 6,
+                weeksPerFTE: 0.2,
+                maxWeeks: 10
+            },
+            'ad-optimization': {
+                baseCost: 10000,
+                costPerSpend: 0.001, // percentage of monthly spend
+                baseWeeks: 4,
+                weeksPerSpendScale: 0.2, // per €10k monthly spend
+                maxWeeks: 8
+            }
+        };
+
+        // Efficiency gains assumptions
+        const efficiencyGains = {
+            'sales-engine': {
+                timeReduction: 0.50, // 50% reduction in lead gen time
+                conversionLift: 0.30, // 30% improvement in conversion
+                description: '50% time savings on lead generation, 30% conversion improvement'
+            },
+            'content-factory': {
+                timeReduction: 0.60, // 60% reduction in content creation time
+                externalReduction: 0.40, // 40% reduction in external spend
+                description: '60% faster content production, 40% reduction in external costs'
+            },
+            'customer-analytics': {
+                churnReduction: 0.20, // 20% reduction in churn
+                timeReduction: 0.70, // 70% reduction in manual analysis
+                description: '20% churn reduction, 70% faster insights generation'
+            },
+            'chatbot-support': {
+                ticketAutomation: 0.50, // 50% of repetitive tickets automated
+                timeReduction: 0.30, // 30% faster resolution for remaining
+                description: '50% ticket automation, 30% faster resolution times'
+            },
+            'ad-optimization': {
+                roasLift: 0.25, // 25% improvement in ROAS
+                timeReduction: 0.40, // 40% reduction in optimization time
+                description: '25% ROAS improvement, 40% time savings on campaign management'
+            }
+        };
+
+        // Improvements for each topic
+        const improvements = {
+            'sales-engine': [
+                'Implement AI prospecting tools like Apollo.io, ZoomInfo, or Cognism for intelligent lead discovery and enrichment',
+                'Deploy conversational AI (Drift, Intercom, or Qualified) for automated lead qualification on website',
+                'Integrate AI email sequencing with Outreach.io, Salesloft, or Reply.io for personalized at-scale outreach',
+                'Use AI meeting schedulers (Calendly AI, Chili Piper) with intelligent lead routing',
+                'Implement sales intelligence dashboards with Gong or Chorus for call analytics and coaching insights'
+            ],
+            'content-factory': [
+                'Deploy enterprise AI writing assistants like Jasper, Writer.com, or Copy.ai for brand-consistent content',
+                'Implement AI image generation (Midjourney, DALL-E, Adobe Firefly) for rapid visual content creation',
+                'Use SEO AI tools (Clearscope, Surfer SEO, MarketMuse) for content optimization and keyword strategy',
+                'Integrate AI video creation platforms (Synthesia, HeyGen, Runway) for scalable video content',
+                'Implement content workflow automation with AI-powered DAM systems (Bynder, Brandfolder with AI)'
+            ],
+            'customer-analytics': [
+                'Deploy customer data platforms (Segment, mParticle) with AI-powered identity resolution',
+                'Implement predictive analytics engines (Pecan AI, DataRobot, or H2O.ai) for churn prediction',
+                'Use AI-powered recommendation engines (Dynamic Yield, Algolia Recommend) for personalization',
+                'Integrate customer health scoring tools (Gainsight, ChurnZero) with AI predictive models',
+                'Deploy real-time analytics dashboards (Tableau with Einstein, Looker with Vertex AI) for instant insights'
+            ],
+            'chatbot-support': [
+                'Implement conversational AI platforms (Ada, Forethought, or Ultimate.ai) trained on your knowledge base',
+                'Deploy AI ticket routing and prioritization (Zendesk AI, Freshdesk Freddy) for intelligent queue management',
+                'Integrate AI-powered agent assist tools (Guru, Coveo) for real-time answer suggestions',
+                'Use sentiment analysis (MonkeyLearn, Lexalytics) to identify at-risk customers and escalate proactively',
+                'Implement voice AI (PolyAI, Replicant) for phone support automation where applicable'
+            ],
+            'ad-optimization': [
+                'Deploy AI bid management platforms (Marin Software, Optmyzr, Adzooma) for automated optimization',
+                'Implement creative AI testing (Pencil, AdCreative.ai) for rapid ad variation generation',
+                'Use AI audience platforms (Metadata.io, 6sense) for B2B intent-based targeting',
+                'Integrate cross-channel AI optimization (Smartly.io, Revealbot) for unified campaign management',
+                'Deploy attribution AI (Rockerbox, Triple Whale) for accurate ROAS measurement and budget allocation'
+            ]
+        };
+
+        // DOM Elements
+        const sections = document.querySelectorAll('.section');
+        const steps = document.querySelectorAll('.step');
+        const checklistItems = document.querySelectorAll('.checklist-item');
+        const topicCheckboxes = document.querySelectorAll('input[name="topics"]');
+        const btnToStep2 = document.getElementById('btn-to-step-2');
+        const btnToStep3 = document.getElementById('btn-to-step-3');
+        const btnBackTo1 = document.getElementById('btn-back-to-1');
+        const btnBackTo2 = document.getElementById('btn-back-to-2');
+        const btnCalculate = document.getElementById('btn-calculate');
+        const btnStartOver = document.getElementById('btn-start-over');
+        const scenarioToggle = document.getElementById('scenario-toggle');
+
+        // Initialize
+        function init() {
+            setupEventListeners();
+            updateChecklistProgress();
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Topic selection
+            topicCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', handleTopicSelection);
+            });
+
+            // Navigation buttons
+            btnToStep2.addEventListener('click', () => goToStep(2));
+            btnToStep3.addEventListener('click', () => goToStep(3));
+            btnBackTo1.addEventListener('click', () => goToStep(1));
+            btnBackTo2.addEventListener('click', () => goToStep(2));
+            btnCalculate.addEventListener('click', calculateROI);
+            btnStartOver.addEventListener('click', startOver);
+
+            // Scenario toggle
+            scenarioToggle.addEventListener('change', handleScenarioToggle);
+
+            // Radio option styling
+            document.querySelectorAll('.radio-option').forEach(option => {
+                option.addEventListener('click', function(e) {
+                    if (e.target.type !== 'checkbox') {
+                        const checkbox = this.querySelector('input[type="checkbox"]');
+                        checkbox.checked = !checkbox.checked;
+                        checkbox.dispatchEvent(new Event('change'));
+                    }
+                });
+            });
+        }
+
+        // Handle topic selection
+        function handleTopicSelection() {
+            state.selectedTopics = Array.from(topicCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            // Update visual selection
+            document.querySelectorAll('.radio-option').forEach(option => {
+                const checkbox = option.querySelector('input[type="checkbox"]');
+                option.classList.toggle('selected', checkbox.checked);
+            });
+
+            // Enable/disable continue button
+            btnToStep2.disabled = state.selectedTopics.length === 0;
+
+            // Update checklist
+            if (state.selectedTopics.length > 0) {
+                checklistItems[0].classList.add('checked');
+            } else {
+                checklistItems[0].classList.remove('checked');
+            }
+        }
+
+        // Navigate to step
+        function goToStep(stepNumber) {
+            state.currentStep = stepNumber;
+
+            // Update sections
+            sections.forEach(section => section.classList.remove('active'));
+            document.getElementById(`section-${stepNumber}`).classList.add('active');
+
+            // Update progress steps
+            steps.forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                if (index + 1 < stepNumber) {
+                    step.classList.add('completed');
+                } else if (index + 1 === stepNumber) {
+                    step.classList.add('active');
+                }
+            });
+
+            // Step-specific actions
+            if (stepNumber === 2) {
+                showDynamicQuestions();
+            } else if (stepNumber === 3) {
+                collectInputData();
+                populateDataReview();
+            }
+
+            updateChecklistProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Show dynamic questions based on selected topics
+        function showDynamicQuestions() {
+            // Hide all question sections
+            document.querySelectorAll('.dynamic-questions').forEach(q => {
+                q.classList.remove('visible');
+            });
+
+            // Show selected topic questions
+            state.selectedTopics.forEach(topic => {
+                const questionSection = document.getElementById(`questions-${topic}`);
+                if (questionSection) {
+                    questionSection.classList.add('visible');
+                }
+            });
+        }
+
+        // Collect input data from form
+        function collectInputData() {
+            state.inputData = {};
+
+            if (state.selectedTopics.includes('sales-engine')) {
+                state.inputData['sales-engine'] = {
+                    fte: getInputValue('sales-fte'),
+                    leadHours: getInputValue('sales-lead-hours'),
+                    salary: getInputValue('sales-salary'),
+                    outreach: getInputValue('sales-outreach'),
+                    conversion: getInputValue('sales-conversion')
+                };
+            }
+
+            if (state.selectedTopics.includes('content-factory')) {
+                state.inputData['content-factory'] = {
+                    fte: getInputValue('content-fte'),
+                    hours: getInputValue('content-hours'),
+                    salary: getInputValue('content-salary'),
+                    volume: getInputValue('content-volume'),
+                    external: getInputValue('content-external')
+                };
+            }
+
+            if (state.selectedTopics.includes('customer-analytics')) {
+                state.inputData['customer-analytics'] = {
+                    customers: getInputValue('analytics-customers'),
+                    clv: getInputValue('analytics-clv'),
+                    churn: getInputValue('analytics-churn'),
+                    hours: getInputValue('analytics-hours'),
+                    tools: getInputValue('analytics-tools')
+                };
+            }
+
+            if (state.selectedTopics.includes('chatbot-support')) {
+                state.inputData['chatbot-support'] = {
+                    fte: getInputValue('support-fte'),
+                    salary: getInputValue('support-salary'),
+                    tickets: getInputValue('support-tickets'),
+                    time: getInputValue('support-time'),
+                    repetitive: getInputValue('support-repetitive')
+                };
+            }
+
+            if (state.selectedTopics.includes('ad-optimization')) {
+                state.inputData['ad-optimization'] = {
+                    spend: getInputValue('ads-spend'),
+                    fte: getInputValue('ads-fte'),
+                    salary: getInputValue('ads-salary'),
+                    roas: getInputValue('ads-roas'),
+                    hours: getInputValue('ads-hours')
+                };
+            }
+
+            // Update checklist
+            checklistItems[1].classList.add('checked');
+        }
+
+        // Helper to get input value
+        function getInputValue(id) {
+            const input = document.getElementById(id);
+            const value = parseFloat(input?.value);
+            return isNaN(value) ? null : value;
+        }
+
+        // Populate data review section
+        function populateDataReview() {
+            const container = document.getElementById('data-review-container');
+            container.innerHTML = '';
+
+            state.selectedTopics.forEach(topic => {
+                const data = state.inputData[topic];
+                const card = document.createElement('div');
+                card.className = 'improvement-card';
+                card.innerHTML = `
+                    <h4>${topicNames[topic]}</h4>
+                    <ul class="assumptions-list">
+                        ${generateReviewItems(topic, data)}
+                    </ul>
+                `;
+                container.appendChild(card);
+            });
+
+            checklistItems[2].classList.add('checked');
+        }
+
+        // Generate review items for a topic
+        function generateReviewItems(topic, data) {
+            const items = [];
+            const def = defaults[topic];
+
+            switch(topic) {
+                case 'sales-engine':
+                    items.push(reviewItem('Sales FTEs', data.fte, def.fte, 'employees'));
+                    items.push(reviewItem('Daily lead gen hours', data.leadHours, def.leadHours, 'hours'));
+                    items.push(reviewItem('Average salary', data.salary, def.salary, 'EUR/year'));
+                    items.push(reviewItem('Monthly outreach volume', data.outreach, def.outreach, 'contacts'));
+                    items.push(reviewItem('Conversion rate', data.conversion, def.conversion, '%'));
+                    break;
+                case 'content-factory':
+                    items.push(reviewItem('Content FTEs', data.fte, def.fte, 'employees'));
+                    items.push(reviewItem('Weekly content hours', data.hours, def.hours, 'hours'));
+                    items.push(reviewItem('Average salary', data.salary, def.salary, 'EUR/year'));
+                    items.push(reviewItem('Monthly content pieces', data.volume, def.volume, 'pieces'));
+                    items.push(reviewItem('External content spend', data.external, def.external, 'EUR/month'));
+                    break;
+                case 'customer-analytics':
+                    items.push(reviewItem('Customer database size', data.customers, def.customers, 'customers'));
+                    items.push(reviewItem('Customer lifetime value', data.clv, def.clv, 'EUR'));
+                    items.push(reviewItem('Annual churn rate', data.churn, def.churn, '%'));
+                    items.push(reviewItem('Weekly analysis hours', data.hours, def.hours, 'hours'));
+                    items.push(reviewItem('Monthly tools spend', data.tools, def.tools, 'EUR'));
+                    break;
+                case 'chatbot-support':
+                    items.push(reviewItem('Support FTEs', data.fte, def.fte, 'employees'));
+                    items.push(reviewItem('Average salary', data.salary, def.salary, 'EUR/year'));
+                    items.push(reviewItem('Monthly tickets', data.tickets, def.tickets, 'tickets'));
+                    items.push(reviewItem('Avg handling time', data.time, def.time, 'minutes'));
+                    items.push(reviewItem('Repetitive tickets', data.repetitive, def.repetitive, '%'));
+                    break;
+                case 'ad-optimization':
+                    items.push(reviewItem('Monthly ad spend', data.spend, def.spend, 'EUR'));
+                    items.push(reviewItem('Ads management FTEs', data.fte, def.fte, 'employees'));
+                    items.push(reviewItem('Average salary', data.salary, def.salary, 'EUR/year'));
+                    items.push(reviewItem('Current ROAS', data.roas, def.roas, 'x'));
+                    items.push(reviewItem('Weekly optimization hours', data.hours, def.hours, 'hours'));
+                    break;
+            }
+
+            return items.join('');
+        }
+
+        // Generate a review item with missing data handling
+        function reviewItem(label, value, defaultValue, unit) {
+            if (value === null) {
+                return `<li><strong>${label}:</strong> <span style="color: var(--gold);">Not provided</span> (using benchmark: ${formatNumber(defaultValue)} ${unit})</li>`;
+            }
+            return `<li><strong>${label}:</strong> ${formatNumber(value)} ${unit}</li>`;
+        }
+
+        // Calculate ROI for all selected topics
+        function calculateROI() {
+            checklistItems[3].classList.add('checked');
+            goToStep(4);
+            renderResults();
+        }
+
+        // Render results table
+        function renderResults() {
+            const tbody = document.getElementById('results-body');
+            tbody.innerHTML = '';
+
+            const conservativeFactor = state.isOptimistic ? 1.0 : 0.8;
+            let totalROIMin = 0;
+            let totalROIMax = 0;
+            let totalCost = 0;
+
+            state.selectedTopics.forEach(topic => {
+                const result = calculateTopicROI(topic, conservativeFactor);
+                totalROIMin += result.roiMin;
+                totalROIMax += result.roiMax;
+                totalCost += result.cost;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${topicNames[topic]}</strong></td>
+                    <td class="roi-value roi-positive">${formatCurrency(result.roiMin)} – ${formatCurrency(result.roiMax)}</td>
+                    <td class="roi-value roi-positive">${result.roiPercentMin}% – ${result.roiPercentMax}%</td>
+                    <td>${result.duration}</td>
+                    <td class="roi-value">${formatCurrency(result.cost)}</td>
+                    <td>${result.notes}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Add total row if multiple topics
+            if (state.selectedTopics.length > 1) {
+                const totalRow = document.createElement('tr');
+                totalRow.className = 'highlight-row';
+                const totalROIPercentMin = Math.round((totalROIMin / totalCost) * 100);
+                const totalROIPercentMax = Math.round((totalROIMax / totalCost) * 100);
+                totalRow.innerHTML = `
+                    <td><strong>TOTAL</strong></td>
+                    <td class="roi-value roi-positive"><strong>${formatCurrency(totalROIMin)} – ${formatCurrency(totalROIMax)}</strong></td>
+                    <td class="roi-value roi-positive"><strong>${totalROIPercentMin}% – ${totalROIPercentMax}%</strong></td>
+                    <td>-</td>
+                    <td class="roi-value"><strong>${formatCurrency(totalCost)}</strong></td>
+                    <td>Combined projection across all initiatives</td>
+                `;
+                tbody.appendChild(totalRow);
+            }
+
+            renderMethodology();
+            renderImprovements();
+            checklistItems[4].classList.add('checked');
+
+            // Update toggle labels
+            document.getElementById('label-conservative').classList.toggle('active', !state.isOptimistic);
+            document.getElementById('label-optimistic').classList.toggle('active', state.isOptimistic);
+        }
+
+        // Calculate ROI for a single topic
+        function calculateTopicROI(topic, conservativeFactor) {
+            const data = state.inputData[topic] || {};
+            const def = defaults[topic];
+            const params = projectParams[topic];
+            const gains = efficiencyGains[topic];
+
+            // Merge with defaults
+            const input = {
+                ...def,
+                ...Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== null))
+            };
+
+            let roiMin, roiMax, cost, durationWeeks, notes;
+            const missingFields = Object.entries(data).filter(([_, v]) => v === null).length;
+
+            switch(topic) {
+                case 'sales-engine':
+                    // Calculate time savings value
+                    const hourlyRate = input.salary / (52 * 40);
+                    const yearlySavedHours = input.fte * input.leadHours * 250 * gains.timeReduction * conservativeFactor;
+                    const timeSavings = yearlySavedHours * hourlyRate;
+
+                    // Conversion improvement value (simplified)
+                    const conversionValue = input.outreach * 12 * (gains.conversionLift * conservativeFactor) * 50; // €50 per additional converted lead
+
+                    roiMin = Math.round((timeSavings + conversionValue * 0.7) / 1000) * 1000;
+                    roiMax = Math.round((timeSavings + conversionValue) / 1000) * 1000;
+
+                    cost = Math.round(params.baseCost + (input.fte * params.costPerFTE));
+                    durationWeeks = Math.min(Math.round(params.baseWeeks + (input.fte * params.weeksPerFTE)), params.maxWeeks);
+                    break;
+
+                case 'content-factory':
+                    // Time savings
+                    const contentHourlyRate = input.salary / (52 * 40);
+                    const contentSavedHours = input.fte * input.hours * 52 * gains.timeReduction * conservativeFactor;
+                    const contentTimeSavings = contentSavedHours * contentHourlyRate;
+
+                    // External cost reduction
+                    const externalSavings = input.external * 12 * gains.externalReduction * conservativeFactor;
+
+                    roiMin = Math.round((contentTimeSavings * 0.8 + externalSavings * 0.8) / 1000) * 1000;
+                    roiMax = Math.round((contentTimeSavings + externalSavings) / 1000) * 1000;
+
+                    cost = Math.round(params.baseCost + (input.fte * params.costPerFTE));
+                    durationWeeks = Math.min(Math.round(params.baseWeeks + (input.fte * params.weeksPerFTE)), params.maxWeeks);
+                    break;
+
+                case 'customer-analytics':
+                    // Churn reduction value
+                    const churnReductionValue = input.customers * (input.churn / 100) * gains.churnReduction * conservativeFactor * input.clv;
+
+                    // Time savings on analysis
+                    const analysisHourlyRate = 75; // Assumed analyst rate
+                    const analysisSavings = input.hours * 52 * gains.timeReduction * conservativeFactor * analysisHourlyRate;
+
+                    roiMin = Math.round((churnReductionValue * 0.6 + analysisSavings) / 1000) * 1000;
+                    roiMax = Math.round((churnReductionValue + analysisSavings) / 1000) * 1000;
+
+                    cost = Math.round(params.baseCost + (input.customers * params.costPerCustomer));
+                    durationWeeks = Math.min(Math.round(params.baseWeeks + ((input.customers / 10000) * params.weeksPerCustomerScale)), params.maxWeeks);
+                    break;
+
+                case 'chatbot-support':
+                    // Ticket automation savings
+                    const ticketCost = (input.salary / (52 * 40)) * (input.time / 60);
+                    const automatedTickets = input.tickets * 12 * (input.repetitive / 100) * gains.ticketAutomation * conservativeFactor;
+                    const automationSavings = automatedTickets * ticketCost;
+
+                    // Time reduction on remaining
+                    const remainingTickets = (input.tickets * 12) - automatedTickets;
+                    const timeReductionSavings = remainingTickets * ticketCost * gains.timeReduction * conservativeFactor;
+
+                    roiMin = Math.round((automationSavings * 0.7 + timeReductionSavings * 0.7) / 1000) * 1000;
+                    roiMax = Math.round((automationSavings + timeReductionSavings) / 1000) * 1000;
+
+                    cost = Math.round(params.baseCost + (input.fte * params.costPerFTE));
+                    durationWeeks = Math.min(Math.round(params.baseWeeks + (input.fte * params.weeksPerFTE)), params.maxWeeks);
+                    break;
+
+                case 'ad-optimization':
+                    // ROAS improvement value
+                    const currentRevenue = input.spend * input.roas;
+                    const improvedROAS = input.roas * (1 + gains.roasLift * conservativeFactor);
+                    const roasValue = (input.spend * improvedROAS) - currentRevenue;
+                    const yearlyRoasValue = roasValue * 12;
+
+                    // Time savings
+                    const adsHourlyRate = input.salary / (52 * 40);
+                    const adsSavedHours = input.fte * input.hours * 52 * gains.timeReduction * conservativeFactor;
+                    const adsTimeSavings = adsSavedHours * adsHourlyRate;
+
+                    roiMin = Math.round((yearlyRoasValue * 0.7 + adsTimeSavings) / 1000) * 1000;
+                    roiMax = Math.round((yearlyRoasValue + adsTimeSavings) / 1000) * 1000;
+
+                    cost = Math.round(params.baseCost + (input.spend * params.costPerSpend));
+                    durationWeeks = Math.min(Math.round(params.baseWeeks + ((input.spend / 10000) * params.weeksPerSpendScale)), params.maxWeeks);
+                    break;
+            }
+
+            // Format duration
+            const duration = durationWeeks > 8 ? `${Math.round(durationWeeks / 4)} months` : `${durationWeeks} weeks`;
+
+            // Generate notes
+            notes = gains.description;
+            if (missingFields > 0) {
+                notes += ` <span style="color: var(--gold);">[${missingFields} values estimated]</span>`;
+            }
+
+            // Calculate ROI percentages
+            const roiPercentMin = Math.round((roiMin / cost) * 100);
+            const roiPercentMax = Math.round((roiMax / cost) * 100);
+
+            return { roiMin, roiMax, cost, duration, notes, roiPercentMin, roiPercentMax };
+        }
+
+        // Render methodology section
+        function renderMethodology() {
+            const list = document.getElementById('methodology-list');
+            list.innerHTML = '';
+
+            const methodologyItems = [
+                '<strong>Project Duration:</strong> Base duration (4-8 weeks) plus complexity factor based on team size, data volume, or spend scale. Accounts for discovery, development, testing, and deployment phases.',
+                '<strong>Project Cost:</strong> Base implementation cost (€10,000-€18,000) plus variable costs tied to scope (FTEs, customer volume, or ad spend). Includes tool licensing, integration, and training.',
+                '<strong>Time Savings:</strong> Calculated from FTE count × hours saved × hourly rate (derived from annual salary ÷ 2,080 working hours). Industry benchmarks: 40-70% efficiency gains.',
+                '<strong>Revenue Impact:</strong> Based on conversion improvements, churn reduction, or ROAS lift. Conservative estimates use lower end of observed ranges from similar implementations.',
+                '<strong>Conservative vs Optimistic:</strong> Conservative scenario applies 20% reduction to all efficiency gains to account for implementation friction and learning curves.',
+                '<strong>Data Sources:</strong> Efficiency benchmarks derived from 50+ sales/marketing AI implementations, industry reports (Gartner, Forrester, McKinsey), and vendor case studies.'
+            ];
+
+            methodologyItems.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = item;
+                list.appendChild(li);
+            });
+        }
+
+        // Render improvements section
+        function renderImprovements() {
+            const container = document.getElementById('improvements-container');
+            container.innerHTML = '';
+
+            state.selectedTopics.forEach(topic => {
+                const card = document.createElement('div');
+                card.className = 'improvement-card';
+                card.innerHTML = `
+                    <h4>${topicNames[topic]}</h4>
+                    <ul class="improvement-list">
+                        ${improvements[topic].map(imp => `<li>${imp}</li>`).join('')}
+                    </ul>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Handle scenario toggle
+        function handleScenarioToggle() {
+            state.isOptimistic = scenarioToggle.checked;
+            renderResults();
+        }
+
+        // Update checklist progress
+        function updateChecklistProgress() {
+            // This is called on step changes to ensure visual consistency
+        }
+
+        // Start over
+        function startOver() {
+            // Reset state
+            state.currentStep = 1;
+            state.selectedTopics = [];
+            state.inputData = {};
+            state.isOptimistic = false;
+
+            // Reset form
+            topicCheckboxes.forEach(cb => {
+                cb.checked = false;
+            });
+            document.querySelectorAll('.radio-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.value = '';
+            });
+            scenarioToggle.checked = false;
+
+            // Reset checklist
+            checklistItems.forEach(item => item.classList.remove('checked'));
+
+            // Reset button
+            btnToStep2.disabled = true;
+
+            // Go to step 1
+            goToStep(1);
+        }
+
+        // Format number with thousand separators
+        function formatNumber(num) {
+            if (num === null || num === undefined) return '-';
+            return new Intl.NumberFormat('de-DE').format(num);
+        }
+
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('de-DE', {
+                style: 'currency',
+                currency: 'EUR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Initialize on DOM load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
